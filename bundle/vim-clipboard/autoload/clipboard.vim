@@ -22,7 +22,7 @@ function! s:set_command() abort
     let yank = 'pbcopy'
     let paste = 'pbpaste'
   elseif !empty($WAYLAND_DISPLAY) && executable('wl-copy') && executable('wl-paste')
-    let yank = 'wl-copy --foreground --type text/plain'
+    let yank = 'wl-copy --type text/plain'
     let paste = 'wl-paste --no-newline'
   elseif !empty($DISPLAY) && executable('xclip')
     let yank = 'xclip -i -selection clipboard'
