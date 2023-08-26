@@ -115,6 +115,7 @@ else
   let s:clang_std = {
         \ 'c' : 'c11',
         \ 'cpp': 'c++1z',
+        \ 'cuda': 'c++11',
         \ 'objc': 'c11',
         \ 'objcpp': 'c++1z',
         \ }
@@ -205,6 +206,14 @@ function! SpaceVim#layers#lang#c#config() abort
     call SpaceVim#plugins#repl#reg('c', 'igcc')
   endif
   call SpaceVim#mapping#space#regesit_lang_mappings('cpp', function('s:language_specified_mappings'))
+  let cuda_runner = {
+        \ 'exe' : 'nvcc',
+        \ 'targetopt' : '-o',
+        \ 'opt' : ['-std=' . s:clang_std.cuda] + s:clang_flag + ['-x', 'cu', '-'],
+        \ 'usestdin' : 1,
+        \ }
+  call SpaceVim#plugins#runner#reg_runner('cuda', [cuda_runner, '#TEMP#'])
+  call SpaceVim#mapping#space#regesit_lang_mappings('cuda', function('s:language_specified_mappings'))
   let objc_runner = {
         \ 'exe' : 'gcc',
         \ 'targetopt' : '-o',
@@ -253,6 +262,10 @@ function! SpaceVim#layers#lang#c#config() abort
           \ })
     call SpaceVim#layers#format#add_filetype({
           \ 'filetype' : 'cpp',
+          \ 'enable' : 1,
+          \ })
+    call SpaceVim#layers#format#add_filetype({
+          \ 'filetype' : 'cuda',
           \ 'enable' : 1,
           \ })
     call SpaceVim#layers#format#add_filetype({
@@ -370,7 +383,7 @@ function! s:update_clang_flag() abort
     call s:update_checkers_argv(argvs, ['c', 'cpp'])
     call s:update_autocomplete_argv(argvs, ['c', 'cpp'])
     call s:update_neoinclude(argvs, ['c', 'cpp'])
-    call s:update_runner(argvs, ['c', 'cpp'])
+    call s:update_runner(argvs, ['c', 'cpp', 'cuda'])
   endif
 endfunction
 " }}}
@@ -455,6 +468,15 @@ function! s:update_runner(argv, fts) abort
           \ 'usestdin' : 1,
           \ }
     call SpaceVim#plugins#runner#reg_runner('cpp', [cpp_runner, '#TEMP#'])
+  endif
+  if index(a:fts, 'cuda') !=# -1
+    let cuda_runner = {
+          \ 'exe' : 'nvcc',
+          \ 'targetopt' : '-o',
+          \ 'opt' : a:argv + (default_std ? [] : ['-std=' . s:clang_std.cuda]) + s:clang_flag + ['-x', 'cu', '-'],
+          \ 'usestdin' : 1,
+          \ }
+    call SpaceVim#plugins#runner#reg_runner('cuda', [cuda_runner, '#TEMP#'])
   endif
   " update clang_flag for objective-c
   if index(a:fts, 'objc') !=# -1
