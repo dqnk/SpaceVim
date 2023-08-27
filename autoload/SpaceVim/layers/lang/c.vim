@@ -34,6 +34,7 @@
 " >
 "   'c'     : 'c11',
 "   'cpp'   : 'c++1z',
+"   'cuda'  : 'c++11',
 "   'objc'  : 'c11',
 "   'objcpp': 'c++1z',
 " <
@@ -50,6 +51,7 @@
 "     [layers.clang_std]
 "       c = "c11"
 "       cpp = "c++1z"
+"       cuda: "c++11"
 "       objc = "c11"
 "       objcpp = "c++1z"
 " <
@@ -180,9 +182,13 @@ function! SpaceVim#layers#lang#c#config() abort
         \ function('s:go_to_declaration'))
   call SpaceVim#mapping#g_capital_d#add('cpp',
         \ function('s:go_to_declaration'))
+  call SpaceVim#mapping#g_capital_d#add('cuda',
+        \ function('s:go_to_declaration'))
   call SpaceVim#mapping#gd#add('c',
         \ function('s:go_to_def'))
   call SpaceVim#mapping#gd#add('cpp',
+        \ function('s:go_to_def'))
+  call SpaceVim#mapping#gd#add('cuda',
         \ function('s:go_to_def'))
   " TODO: add stdin suport flex -t lexer.l | gcc -o lexer.o -xc -
   let c_runner = {
@@ -383,7 +389,7 @@ function! s:update_clang_flag() abort
     call s:update_checkers_argv(argvs, ['c', 'cpp'])
     call s:update_autocomplete_argv(argvs, ['c', 'cpp'])
     call s:update_neoinclude(argvs, ['c', 'cpp'])
-    call s:update_runner(argvs, ['c', 'cpp', 'cuda'])
+    call s:update_runner(argvs, ['c', 'cpp'])
   endif
 endfunction
 " }}}
